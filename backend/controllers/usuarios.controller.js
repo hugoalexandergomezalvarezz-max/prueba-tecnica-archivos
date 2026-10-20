@@ -1,14 +1,5 @@
 const usuariosService = require('../services/usuarios.service');
-const ErrorDeNegocio = require('../errors/ErrorDeNegocio');
-
-function responderError(res, error) {
-    if (error instanceof ErrorDeNegocio) {
-        return res.status(error.estado).json({ error: error.message });
-    }
-
-    console.error(error);
-    return res.status(500).json({ error: 'Ocurrió un error en el servidor. Intenta de nuevo más tarde.' });
-}
+const responderError = require('../errors/responderError');
 
 async function registrarUsuario(req, res) {
     try {

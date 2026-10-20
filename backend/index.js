@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const session = require('express-session');
 const usuariosRoutes = require('./routes/usuarios.routes');
+const archivosRoutes = require('./routes/archivos.routes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -24,6 +25,7 @@ app.use(session({
 }));
 
 app.use('/api/usuarios', usuariosRoutes);
+app.use('/api/archivos', archivosRoutes);
 
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en el puerto ${PORT}`);
