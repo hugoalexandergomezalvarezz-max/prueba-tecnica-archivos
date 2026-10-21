@@ -24,7 +24,7 @@ _Pendiente: se completa al terminar el proyecto._
 
 ### Usuarios y sesión
 
-- Las contraseñas se guardan como hash con bcrypt, nunca en texto plano.
+- Las contraseñas se guardan como hash con bcrypt,  nunca en texto plano.
 - Guardo los correos en minúsculas y sin espacios para evitar duplicados.
 - El mensaje del login es el mismo si falla el correo o la contraseña, para no revelar qué correos existen.
 
