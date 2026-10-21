@@ -1,4 +1,4 @@
-async function leerRespuesta(respuesta) {
+﻿async function leerRespuesta(respuesta) {
   const datos = await respuesta.json().catch(() => ({}))
 
   if (!respuesta.ok) {
