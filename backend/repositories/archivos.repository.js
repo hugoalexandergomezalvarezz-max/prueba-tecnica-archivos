@@ -45,4 +45,19 @@ async function obtenerPorIdYUsuario(id, usuarioId) {
     return resultado.recordset[0];
 }
 
-module.exports = { crearArchivo, listarPorUsuario, obtenerPorIdYUsuario };
+async function eliminarPorIdYUsuario(id, usuarioId) {
+    const pool = await conectarDB();
+
+    const resultado = await pool.request()
+        .input('id', sql.UniqueIdentifier, id)
+        .input('usuarioId', usuarioId)
+        .query(`
+            DELETE FROM Archivos
+            OUTPUT DELETED.NombreGuardado
+            WHERE Id = @id AND UsuarioId = @usuarioId
+        `);
+
+    return resultado.recordset[0];
+}
+
+module.exports = { crearArchivo, listarPorUsuario, obtenerPorIdYUsuario, eliminarPorIdYUsuario };

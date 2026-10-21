@@ -60,4 +60,21 @@ async function obtenerArchivoParaDescarga(id, usuarioId) {
     };
 }
 
-module.exports = { guardarArchivo, listarArchivos, obtenerArchivoParaDescarga };
+async function eliminarArchivo(id, usuarioId) {
+    if (!UUID_REGEX.test(id)) {
+        throw new ErrorDeNegocio('Archivo no encontrado.', 404);
+    }
+
+    const eliminado = await archivosRepository.eliminarPorIdYUsuario(id, usuarioId);
+
+    if (!eliminado) {
+        throw new ErrorDeNegocio('Archivo no encontrado.', 404);
+    }
+
+    const rutaEnDisco = path.join(__dirname, '..', 'uploads', eliminado.NombreGuardado);
+    await fs.unlink(rutaEnDisco).catch((error) => {
+        console.error('No se pudo borrar el archivo del disco:', error);
+    });
+}
+
+module.exports = { guardarArchivo, listarArchivos, obtenerArchivoParaDescarga, eliminarArchivo };

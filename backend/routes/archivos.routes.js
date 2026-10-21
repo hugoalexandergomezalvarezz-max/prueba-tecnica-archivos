@@ -7,5 +7,6 @@ const archivosController = require('../controllers/archivos.controller');
 router.post('/', requiereSesion, subirArchivo, archivosController.cargarArchivo);
 router.get('/', requiereSesion, archivosController.listarArchivos);
 router.get('/:id/descargar', requiereSesion, archivosController.descargarArchivo);
+router.delete('/:id', requiereSesion, archivosController.eliminarArchivo);
 
 module.exports = router;

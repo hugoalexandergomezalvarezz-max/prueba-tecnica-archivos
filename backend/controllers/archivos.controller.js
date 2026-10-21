@@ -40,4 +40,17 @@ async function descargarArchivo(req, res) {
     }
 }
 
-module.exports = { cargarArchivo, listarArchivos, descargarArchivo };
+async function eliminarArchivo(req, res) {
+    try {
+        await archivosService.eliminarArchivo(
+            req.params.id,
+            req.session.usuarioId
+        );
+
+        res.status(200).json({ mensaje: 'Archivo eliminado exitosamente.' });
+    } catch (error) {
+        responderError(res, error);
+    }
+}
+
+module.exports = { cargarArchivo, listarArchivos, descargarArchivo, eliminarArchivo };
