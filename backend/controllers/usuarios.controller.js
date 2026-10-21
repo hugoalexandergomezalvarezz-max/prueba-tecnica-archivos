@@ -39,4 +39,15 @@ async function iniciarSesion(req, res) {
     }
 }
 
-module.exports = { registrarUsuario, iniciarSesion };
+function cerrarSesion(req, res) {
+    req.session.destroy((error) => {
+        if (error) {
+            return responderError(res, error);
+        }
+
+        res.clearCookie('connect.sid');
+        res.status(200).json({ mensaje: 'Sesión cerrada exitosamente.' });
+    });
+}
+
+module.exports = { registrarUsuario, iniciarSesion, cerrarSesion };
