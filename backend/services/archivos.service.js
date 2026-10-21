@@ -27,4 +27,15 @@ async function guardarArchivo(usuarioId, archivoSubido) {
     };
 }
 
-module.exports = { guardarArchivo };
+async function listarArchivos(usuarioId) {
+    const filas = await archivosRepository.listarPorUsuario(usuarioId);
+
+    return filas.map((fila) => ({
+        id: fila.Id,
+        nombreOriginal: fila.NombreOriginal,
+        tipo: fila.Tipo,
+        tamanoBytes: fila.TamanoBytes
+    }));
+}
+
+module.exports = { guardarArchivo, listarArchivos };

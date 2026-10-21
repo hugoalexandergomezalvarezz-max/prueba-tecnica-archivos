@@ -16,4 +16,18 @@ async function crearArchivo(archivo) {
         `);
 }
 
-module.exports = { crearArchivo };
+async function listarPorUsuario(usuarioId) {
+    const pool = await conectarDB();
+
+    const resultado = await pool.request()
+        .input('usuarioId', usuarioId)
+        .query(`
+            SELECT Id, NombreOriginal, Tipo, TamanoBytes
+            FROM Archivos
+            WHERE UsuarioId = @usuarioId
+        `);
+
+    return resultado.recordset;
+}
+
+module.exports = { crearArchivo, listarPorUsuario };
