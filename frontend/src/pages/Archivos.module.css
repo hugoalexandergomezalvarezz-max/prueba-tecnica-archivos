@@ -1,0 +1,140 @@
+.contenedor {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.titulo {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.botonSecundario {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  background: var(--superficie);
+  color: var(--texto);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.botonSecundario:hover {
+  background: var(--fondo);
+}
+
+.subida {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background: var(--superficie);
+  border: 2px dashed var(--borde);
+  border-radius: var(--radio);
+}
+
+.boton {
+  padding: 0.55rem 1rem;
+  border: 0;
+  border-radius: 8px;
+  background: var(--primario);
+  color: var(--superficie);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.boton:hover:not(:disabled) {
+  background: var(--primario-oscuro);
+}
+
+.boton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error {
+  margin: 0 0 1rem;
+  padding: 0.6rem 0.75rem;
+  background: var(--peligro-fondo);
+  color: var(--peligro-oscuro);
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.vacio {
+  text-align: center;
+  color: var(--texto-suave);
+  padding: 2rem 0;
+}
+
+.lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.archivo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+}
+
+.nombre {
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.detalle {
+  font-size: 0.85rem;
+  color: var(--texto-suave);
+}
+
+.acciones {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.descargar {
+  padding: 0.45rem 0.9rem;
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  color: var(--texto);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.descargar:hover {
+  background: var(--fondo);
+}
+
+.eliminar {
+  padding: 0.45rem 0.9rem;
+  border: 1px solid var(--peligro);
+  border-radius: 8px;
+  background: var(--superficie);
+  color: var(--peligro);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.eliminar:hover {
+  background: var(--peligro-fondo);
+}

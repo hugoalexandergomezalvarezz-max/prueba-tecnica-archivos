@@ -2,6 +2,13 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { listarArchivos, subirArchivo, eliminarArchivo, urlDescarga } from '../api/archivos'
 import { cerrarSesion } from '../api/usuarios'
+import estilos from './Archivos.module.css'
+
+function formatearTamano(bytes) {
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+}
 
 function Archivos() {
   const [archivos, setArchivos] = useState([])
@@ -77,38 +84,52 @@ function Archivos() {
   }
 
   return (
-    <main>
-      <h1>Mis archivos</h1>
+    <main className={estilos.contenedor}>
+      <header className={estilos.encabezado}>
+        <h1 className={estilos.titulo}>Mis archivos</h1>
+        <button type="button" className={estilos.botonSecundario} onClick={manejarCerrarSesion}>
+          Cerrar sesión
+        </button>
+      </header>
 
-      <button type="button" onClick={manejarCerrarSesion}>
-        Cerrar sesión
-      </button>
-
-      <form onSubmit={manejarSubida}>
+      <form className={estilos.subida} onSubmit={manejarSubida}>
         <input
           type="file"
           onChange={(e) => setArchivoElegido(e.target.files[0] ?? null)}
         />
-        <button type="submit" disabled={subiendo}>
+        <button className={estilos.boton} type="submit" disabled={subiendo}>
           {subiendo ? 'Subiendo...' : 'Subir'}
         </button>
       </form>
 
-      {error && <p role="alert">{error}</p>}
-      {cargando && <p>Cargando...</p>}
+      {error && <p className={estilos.error} role="alert">{error}</p>}
+      {cargando && <p className={estilos.vacio}>Cargando...</p>}
 
       {!cargando && archivos.length === 0 && (
-        <p>Todavía no has subido archivos.</p>
+        <p className={estilos.vacio}>Todavía no has subido archivos.</p>
       )}
 
-      <ul>
+      <ul className={estilos.lista}>
         {archivos.map((archivo) => (
-          <li key={archivo.id}>
-            {archivo.nombreOriginal} ({archivo.tipo}, {archivo.tamanoBytes} bytes){' '}
-            <a href={urlDescarga(archivo.id)}>Descargar</a>{' '}
-            <button type="button" onClick={() => manejarEliminar(archivo)}>
-              Eliminar
-            </button>
+          <li className={estilos.archivo} key={archivo.id}>
+            <div>
+              <div className={estilos.nombre}>{archivo.nombreOriginal}</div>
+              <div className={estilos.detalle}>
+                {archivo.tipo} · {formatearTamano(archivo.tamanoBytes)}
+              </div>
+            </div>
+            <div className={estilos.acciones}>
+              <a className={estilos.descargar} href={urlDescarga(archivo.id)}>
+                Descargar
+              </a>
+              <button
+                type="button"
+                className={estilos.eliminar}
+                onClick={() => manejarEliminar(archivo)}
+              >
+                Eliminar
+              </button>
+            </div>
           </li>
         ))}
       </ul>

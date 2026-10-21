@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { registrarUsuario } from '../api/usuarios'
+import estilos from './Registro.module.css'
 
 function Registro() {
   const [nombreUsuario, setNombreUsuario] = useState('')
@@ -26,43 +27,50 @@ function Registro() {
   }
 
   return (
-    <main>
-      <h1>Crear cuenta</h1>
+    <main className={estilos.pagina}>
+      <div className={estilos.tarjeta}>
+        <h1 className={estilos.titulo}>Crear cuenta</h1>
 
-      <form onSubmit={manejarEnvio}>
-        <label>
-          Nombre de usuario
-          <input
-            type="text"
-            value={nombreUsuario}
-            onChange={(e) => setNombreUsuario(e.target.value)}
-          />
-        </label>
+        <form className={estilos.formulario} onSubmit={manejarEnvio}>
+          <label className={estilos.campo}>
+            Nombre de usuario
+            <input
+              type="text"
+              value={nombreUsuario}
+              onChange={(e) => setNombreUsuario(e.target.value)}
+            />
+          </label>
 
-        <label>
-          Correo
-          <input
-            type="email"
-            value={correo}
-            onChange={(e) => setCorreo(e.target.value)}
-          />
-        </label>
+          <label className={estilos.campo}>
+            Correo
+            <input
+              type="email"
+              value={correo}
+              onChange={(e) => setCorreo(e.target.value)}
+            />
+          </label>
 
-        <label>
-          Contraseña
-          <input
-            type="password"
-            value={contrasena}
-            onChange={(e) => setContrasena(e.target.value)}
-          />
-        </label>
+          <label className={estilos.campo}>
+            Contraseña
+            <input
+              type="password"
+              value={contrasena}
+              onChange={(e) => setContrasena(e.target.value)}
+            />
+            <span className={estilos.ayuda}>Mínimo 8 caracteres</span>
+          </label>
 
-        {error && <p role="alert">{error}</p>}
+          {error && <p className={estilos.error} role="alert">{error}</p>}
 
-        <button type="submit" disabled={enviando}>
-          {enviando ? 'Registrando...' : 'Registrarme'}
-        </button>
-      </form>
+          <button className={estilos.boton} type="submit" disabled={enviando}>
+            {enviando ? 'Registrando...' : 'Registrarme'}
+          </button>
+        </form>
+
+        <p className={estilos.pie}>
+          ¿Ya tienes cuenta? <Link to="/login">Inicia sesión</Link>
+        </p>
+      </div>
     </main>
   )
 }

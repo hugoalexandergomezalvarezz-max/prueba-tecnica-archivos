@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { iniciarSesion } from '../api/usuarios'
+import estilos from './Login.module.css'
 
 function Login() {
   const [correo, setCorreo] = useState('')
@@ -25,38 +26,40 @@ function Login() {
   }
 
   return (
-    <main>
-      <h1>Iniciar sesión</h1>
+    <main className={estilos.pagina}>
+      <div className={estilos.tarjeta}>
+        <h1 className={estilos.titulo}>Iniciar sesión</h1>
 
-      <form onSubmit={manejarEnvio}>
-        <label>
-          Correo
-          <input
-            type="email"
-            value={correo}
-            onChange={(e) => setCorreo(e.target.value)}
-          />
-        </label>
+        <form className={estilos.formulario} onSubmit={manejarEnvio}>
+          <label className={estilos.campo}>
+            Correo
+            <input
+              type="email"
+              value={correo}
+              onChange={(e) => setCorreo(e.target.value)}
+            />
+          </label>
 
-        <label>
-          Contraseña
-          <input
-            type="password"
-            value={contrasena}
-            onChange={(e) => setContrasena(e.target.value)}
-          />
-        </label>
+          <label className={estilos.campo}>
+            Contraseña
+            <input
+              type="password"
+              value={contrasena}
+              onChange={(e) => setContrasena(e.target.value)}
+            />
+          </label>
 
-        {error && <p role="alert">{error}</p>}
+          {error && <p className={estilos.error} role="alert">{error}</p>}
 
-        <button type="submit" disabled={enviando}>
-          {enviando ? 'Ingresando...' : 'Ingresar'}
-        </button>
-      </form>
+          <button className={estilos.boton} type="submit" disabled={enviando}>
+            {enviando ? 'Ingresando...' : 'Ingresar'}
+          </button>
+        </form>
 
-      <p>
-        ¿No tienes cuenta? <Link to="/registro">Regístrate</Link>
-      </p>
+        <p className={estilos.pie}>
+          ¿No tienes cuenta? <Link to="/registro">Regístrate</Link>
+        </p>
+      </div>
     </main>
   )
 }
