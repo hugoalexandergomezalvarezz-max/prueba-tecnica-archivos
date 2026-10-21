@@ -23,4 +23,21 @@ async function listarArchivos(req, res) {
     }
 }
 
-module.exports = { cargarArchivo, listarArchivos };
+async function descargarArchivo(req, res) {
+    try {
+        const archivo = await archivosService.obtenerArchivoParaDescarga(
+            req.params.id,
+            req.session.usuarioId
+        );
+
+        res.download(archivo.rutaEnDisco, archivo.nombreOriginal, (error) => {
+            if (error && !res.headersSent) {
+                responderError(res, error);
+            }
+        });
+    } catch (error) {
+        responderError(res, error);
+    }
+}
+
+module.exports = { cargarArchivo, listarArchivos, descargarArchivo };

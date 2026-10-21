@@ -30,4 +30,19 @@ async function listarPorUsuario(usuarioId) {
     return resultado.recordset;
 }
 
-module.exports = { crearArchivo, listarPorUsuario };
+async function obtenerPorIdYUsuario(id, usuarioId) {
+    const pool = await conectarDB();
+
+    const resultado = await pool.request()
+        .input('id', sql.UniqueIdentifier, id)
+        .input('usuarioId', usuarioId)
+        .query(`
+            SELECT Id, NombreOriginal, NombreGuardado, Tipo
+            FROM Archivos
+            WHERE Id = @id AND UsuarioId = @usuarioId
+        `);
+
+    return resultado.recordset[0];
+}
+
+module.exports = { crearArchivo, listarPorUsuario, obtenerPorIdYUsuario };
