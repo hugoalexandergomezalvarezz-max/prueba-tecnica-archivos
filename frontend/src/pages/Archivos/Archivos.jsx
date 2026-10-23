@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { listarArchivos, subirArchivo, eliminarArchivo, urlDescarga } from '../api/archivos'
-import { cerrarSesion, cambiarPassword } from '../api/usuarios'
+import { listarArchivos, subirArchivo, eliminarArchivo, urlDescarga } from '../../api/archivos'
+import { cerrarSesion, cambiarPassword } from '../../api/usuarios'
 import estilos from './Archivos.module.css'
 
 function formatearTamano(bytes) {

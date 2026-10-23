@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { registrarUsuario } from '../api/usuarios'
+import { registrarUsuario } from '../../api/usuarios'
 import estilos from './Registro.module.css'
 
 function Registro() {

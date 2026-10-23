@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { iniciarSesion } from '../api/usuarios'
+import { iniciarSesion } from '../../api/usuarios'
 import estilos from './Login.module.css'
 
 function Login() {
