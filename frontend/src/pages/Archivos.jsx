@@ -16,7 +16,6 @@ function Archivos() {
   const [cargando, setCargando] = useState(true)
   const [archivoElegido, setArchivoElegido] = useState(null)
   const [subiendo, setSubiendo] = useState(false)
-  // Estados nuevos para la tabla
   const [busqueda, setBusqueda] = useState('')
   const [ordenAscendente, setOrdenAscendente] = useState(false)
   
@@ -44,8 +43,24 @@ function Archivos() {
 
   async function manejarSubida(e) {
     e.preventDefault()
+    
     if (!archivoElegido) {
       setError('Elige un archivo antes de subir.')
+      return
+    }
+
+    const TAMANO_MAXIMO = 10 * 1024 * 1024;
+    const EXTENSIONES_PERMITIDAS = ['.pdf', '.jpg', '.jpeg', '.png', '.txt', '.docx', '.xlsx']
+    
+    const extension = archivoElegido.name.substring(archivoElegido.name.lastIndexOf('.')).toLowerCase()
+    
+    if (archivoElegido.size > TAMANO_MAXIMO) {
+      setError('El archivo supera el tamaño máximo permitido de 10 MB.')
+      return
+    }
+    
+    if (!EXTENSIONES_PERMITIDAS.includes(extension)) {
+      setError('Tipo de archivo no permitido. Solo se aceptan PDF, JPG, PNG, TXT, DOCX y XLSX.')
       return
     }
 
@@ -87,7 +102,6 @@ function Archivos() {
     }
   }
 
-  // 1. Filtramos por búsqueda (nombre, id o tamaño)
   const texto = busqueda.trim().toLowerCase()
   const archivosFiltrados = archivos.filter((archivo) => {
     if (!texto) return true
@@ -98,7 +112,6 @@ function Archivos() {
     )
   })
 
-  // 2. Ordenamos por tamaño
   const archivosOrdenados = archivosFiltrados.sort((a, b) => {
     return ordenAscendente
       ? a.tamanoBytes - b.tamanoBytes
@@ -131,7 +144,6 @@ function Archivos() {
         <p className={estilos.vacio}>Todavía no has subido archivos.</p>
       )}
 
-      {/* Si hay archivos, mostramos el buscador y la tabla */}
       {!cargando && archivos.length > 0 && (
         <>
           <div className={estilos.barraBusqueda}>

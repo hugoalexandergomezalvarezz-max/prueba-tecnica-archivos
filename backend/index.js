@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const session = require('express-session');
@@ -6,6 +8,11 @@ const archivosRoutes = require('./routes/archivos.routes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+if (!process.env.SESSION_SECRET) {
+    console.error('ERROR: Falta SESSION_SECRET en el archivo .env');
+    process.exit(1);
+}
 
 app.use(cors({
     origin: 'http://localhost:5173',
@@ -20,7 +27,8 @@ app.use(session({
     saveUninitialized: false,
     cookie: { 
         secure: false,
-        httpOnly: true 
+        httpOnly: true,
+        maxAge: 30 * 60 * 1000
     }
 }));
 
