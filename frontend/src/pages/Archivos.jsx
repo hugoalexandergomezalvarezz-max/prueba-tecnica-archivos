@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { listarArchivos, subirArchivo, eliminarArchivo, urlDescarga } from '../api/archivos'
-import { cerrarSesion } from '../api/usuarios'
+import { cerrarSesion, cambiarPassword } from '../api/usuarios'
 import estilos from './Archivos.module.css'
 
 function formatearTamano(bytes) {
@@ -19,6 +19,11 @@ function Archivos() {
   const [busqueda, setBusqueda] = useState('')
   const [ordenAscendente, setOrdenAscendente] = useState(false)
   
+  const [mostrarCambioPass, setMostrarCambioPass] = useState(false)
+  const [passActual, setPassActual] = useState('')
+  const [passNueva, setPassNueva] = useState('')
+  const [passConfirmar, setPassConfirmar] = useState('')
+
   const navigate = useNavigate()
 
   async function cargarLista() {
@@ -38,35 +43,21 @@ function Archivos() {
 
   useEffect(() => {
     cargarLista()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   async function manejarSubida(e) {
     e.preventDefault()
-    
-    if (!archivoElegido) {
-      setError('Elige un archivo antes de subir.')
-      return
-    }
+    if (!archivoElegido) { setError('Elige un archivo antes de subir.'); return }
 
     const TAMANO_MAXIMO = 10 * 1024 * 1024;
     const EXTENSIONES_PERMITIDAS = ['.pdf', '.jpg', '.jpeg', '.png', '.txt', '.docx', '.xlsx']
-    
     const extension = archivoElegido.name.substring(archivoElegido.name.lastIndexOf('.')).toLowerCase()
     
-    if (archivoElegido.size > TAMANO_MAXIMO) {
-      setError('El archivo supera el tamaño máximo permitido de 10 MB.')
-      return
-    }
-    
-    if (!EXTENSIONES_PERMITIDAS.includes(extension)) {
-      setError('Tipo de archivo no permitido. Solo se aceptan PDF, JPG, PNG, TXT, DOCX y XLSX.')
-      return
-    }
+    if (archivoElegido.size > TAMANO_MAXIMO) { setError('El archivo supera el tamaño máximo permitido de 10 MB.'); return }
+    if (!EXTENSIONES_PERMITIDAS.includes(extension)) { setError('Tipo de archivo no permitido. Solo se aceptan PDF, JPG, PNG, TXT, DOCX y XLSX.'); return }
 
     setError('')
     setSubiendo(true)
-
     try {
       await subirArchivo(archivoElegido)
       setArchivoElegido(null)
@@ -82,9 +73,7 @@ function Archivos() {
   async function manejarEliminar(archivo) {
     const confirmado = window.confirm(`¿Eliminar "${archivo.nombreOriginal}"?`)
     if (!confirmado) return
-
     setError('')
-
     try {
       await eliminarArchivo(archivo.id)
       await cargarLista()
@@ -102,6 +91,25 @@ function Archivos() {
     }
   }
 
+  async function manejarCambioPass(e) {
+    e.preventDefault()
+    if (passNueva !== passConfirmar) {
+      setError('Las contraseñas nuevas no coinciden.')
+      return
+    }
+    setError('')
+    try {
+      await cambiarPassword(passActual, passNueva)
+      alert('Contraseña actualizada exitosamente.')
+      setMostrarCambioPass(false)
+      setPassActual('')
+      setPassNueva('')
+      setPassConfirmar('')
+    } catch (err) {
+      setError(err.message)
+    }
+  }
+
   const texto = busqueda.trim().toLowerCase()
   const archivosFiltrados = archivos.filter((archivo) => {
     if (!texto) return true
@@ -113,25 +121,34 @@ function Archivos() {
   })
 
   const archivosOrdenados = archivosFiltrados.sort((a, b) => {
-    return ordenAscendente
-      ? a.tamanoBytes - b.tamanoBytes
-      : b.tamanoBytes - a.tamanoBytes
+    return ordenAscendente ? a.tamanoBytes - b.tamanoBytes : b.tamanoBytes - a.tamanoBytes
   })
 
   return (
     <main className={estilos.contenedor}>
       <header className={estilos.encabezado}>
         <h1 className={estilos.titulo}>Mis archivos</h1>
-        <button type="button" className={estilos.botonSecundario} onClick={manejarCerrarSesion}>
-          Cerrar sesión
-        </button>
+        <div>
+          <button type="button" className={estilos.botonSecundario} onClick={() => setMostrarCambioPass(!mostrarCambioPass)}>
+            Cambiar contraseña
+          </button>
+          <button type="button" className={estilos.botonSecundario} onClick={manejarCerrarSesion}>
+            Cerrar sesión
+          </button>
+        </div>
       </header>
 
+      {mostrarCambioPass && (
+        <form className={estilos.subida} onSubmit={manejarCambioPass}>
+          <input type="password" placeholder="Contraseña actual" value={passActual} onChange={(e) => setPassActual(e.target.value)} required />
+          <input type="password" placeholder="Contraseña nueva (min. 8)" value={passNueva} onChange={(e) => setPassNueva(e.target.value)} required />
+          <input type="password" placeholder="Confirmar contraseña nueva" value={passConfirmar} onChange={(e) => setPassConfirmar(e.target.value)} required />
+          <button className={estilos.boton} type="submit">Guardar</button>
+        </form>
+      )}
+
       <form className={estilos.subida} onSubmit={manejarSubida}>
-        <input
-          type="file"
-          onChange={(e) => setArchivoElegido(e.target.files[0] ?? null)}
-        />
+        <input type="file" onChange={(e) => setArchivoElegido(e.target.files[0] ?? null)} />
         <button className={estilos.boton} type="submit" disabled={subiendo}>
           {subiendo ? 'Subiendo...' : 'Subir'}
         </button>
@@ -147,12 +164,7 @@ function Archivos() {
       {!cargando && archivos.length > 0 && (
         <>
           <div className={estilos.barraBusqueda}>
-            <input
-              type="search"
-              placeholder="Buscar por nombre, ID o tamaño..."
-              value={busqueda}
-              onChange={(e) => setBusqueda(e.target.value)}
-            />
+            <input type="search" placeholder="Buscar por nombre, ID o tamaño..." value={busqueda} onChange={(e) => setBusqueda(e.target.value)} />
           </div>
 
           {archivosOrdenados.length === 0 ? (
@@ -163,10 +175,7 @@ function Archivos() {
                 <tr>
                   <th>ID</th>
                   <th>Nombre</th>
-                  <th 
-                    className={estilos.columnaOrdenable}
-                    onClick={() => setOrdenAscendente(!ordenAscendente)}
-                  >
+                  <th className={estilos.columnaOrdenable} onClick={() => setOrdenAscendente(!ordenAscendente)}>
                     Tamaño {ordenAscendente ? '↑' : '↓'}
                   </th>
                   <th>Acciones</th>
@@ -175,22 +184,12 @@ function Archivos() {
               <tbody>
                 {archivosOrdenados.map((archivo) => (
                   <tr key={archivo.id}>
-                    <td className={estilos.idCelda} title={archivo.id}>
-                      {archivo.id.slice(0, 8)}...
-                    </td>
+                    <td className={estilos.idCelda} title={archivo.id}>{archivo.id.slice(0, 8)}...</td>
                     <td>{archivo.nombreOriginal}</td>
                     <td>{formatearTamano(archivo.tamanoBytes)}</td>
                     <td className={estilos.accionesCelda}>
-                      <a className={estilos.descargar} href={urlDescarga(archivo.id)}>
-                        Descargar
-                      </a>
-                      <button
-                        type="button"
-                        className={estilos.eliminar}
-                        onClick={() => manejarEliminar(archivo)}
-                      >
-                        Eliminar
-                      </button>
+                      <a className={estilos.descargar} href={urlDescarga(archivo.id)}>Descargar</a>
+                      <button type="button" className={estilos.eliminar} onClick={() => manejarEliminar(archivo)}>Eliminar</button>
                     </td>
                   </tr>
                 ))}

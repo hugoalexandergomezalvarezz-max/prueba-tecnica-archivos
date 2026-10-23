@@ -11,6 +11,11 @@
   margin-bottom: 1.5rem;
 }
 
+.encabezado > div {
+  display: flex;
+  gap: 0.5rem;
+}
+
 .titulo {
   margin: 0;
   font-size: 1.5rem;
@@ -75,8 +80,6 @@
   color: var(--texto-suave);
   padding: 2rem 0;
 }
-
-/* --- ESTILOS NUEVOS PARA LA TABLA Y BUSCADOR --- */
 
 .barraBusqueda {
   margin-bottom: 1rem;

@@ -2,7 +2,6 @@ const { sql, conectarDB } = require('../db');
 
 async function crearUsuario(nombreUsuario, correo, contrasenaHash) {
     const pool = await conectarDB();
-
     await pool.request()
         .input('nombreUsuario', sql.NVarChar, nombreUsuario)
         .input('correo', sql.NVarChar, correo)
@@ -15,12 +14,18 @@ async function crearUsuario(nombreUsuario, correo, contrasenaHash) {
 
 async function buscarPorCorreo(correo) {
     const pool = await conectarDB();
-
     const resultado = await pool.request()
         .input('correo', sql.NVarChar, correo)
         .query('SELECT Id, NombreUsuario, Contrasena FROM Usuarios WHERE Correo = @correo');
-
     return resultado.recordset[0];
 }
 
-module.exports = { crearUsuario, buscarPorCorreo };
+async function actualizarContrasena(id, contrasenaHash) {
+    const pool = await conectarDB();
+    await pool.request()
+        .input('id', sql.Int, id)
+        .input('contrasenaHash', sql.NVarChar, contrasenaHash)
+        .query('UPDATE Usuarios SET Contrasena = @contrasenaHash WHERE Id = @id');
+}
+
+module.exports = { crearUsuario, buscarPorCorreo, actualizarContrasena };
