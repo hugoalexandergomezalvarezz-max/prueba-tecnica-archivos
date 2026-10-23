@@ -16,6 +16,10 @@ function Archivos() {
   const [cargando, setCargando] = useState(true)
   const [archivoElegido, setArchivoElegido] = useState(null)
   const [subiendo, setSubiendo] = useState(false)
+  // Estados nuevos para la tabla
+  const [busqueda, setBusqueda] = useState('')
+  const [ordenAscendente, setOrdenAscendente] = useState(false)
+  
   const navigate = useNavigate()
 
   async function cargarLista() {
@@ -83,6 +87,24 @@ function Archivos() {
     }
   }
 
+  // 1. Filtramos por búsqueda (nombre, id o tamaño)
+  const texto = busqueda.trim().toLowerCase()
+  const archivosFiltrados = archivos.filter((archivo) => {
+    if (!texto) return true
+    return (
+      archivo.nombreOriginal.toLowerCase().includes(texto) ||
+      archivo.id.toLowerCase().includes(texto) ||
+      formatearTamano(archivo.tamanoBytes).toLowerCase().includes(texto)
+    )
+  })
+
+  // 2. Ordenamos por tamaño
+  const archivosOrdenados = archivosFiltrados.sort((a, b) => {
+    return ordenAscendente
+      ? a.tamanoBytes - b.tamanoBytes
+      : b.tamanoBytes - a.tamanoBytes
+  })
+
   return (
     <main className={estilos.contenedor}>
       <header className={estilos.encabezado}>
@@ -109,30 +131,62 @@ function Archivos() {
         <p className={estilos.vacio}>Todavía no has subido archivos.</p>
       )}
 
-      <ul className={estilos.lista}>
-        {archivos.map((archivo) => (
-          <li className={estilos.archivo} key={archivo.id}>
-            <div>
-              <div className={estilos.nombre}>{archivo.nombreOriginal}</div>
-              <div className={estilos.detalle}>
-                {archivo.tipo} · {formatearTamano(archivo.tamanoBytes)}
-              </div>
-            </div>
-            <div className={estilos.acciones}>
-              <a className={estilos.descargar} href={urlDescarga(archivo.id)}>
-                Descargar
-              </a>
-              <button
-                type="button"
-                className={estilos.eliminar}
-                onClick={() => manejarEliminar(archivo)}
-              >
-                Eliminar
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
+      {/* Si hay archivos, mostramos el buscador y la tabla */}
+      {!cargando && archivos.length > 0 && (
+        <>
+          <div className={estilos.barraBusqueda}>
+            <input
+              type="search"
+              placeholder="Buscar por nombre, ID o tamaño..."
+              value={busqueda}
+              onChange={(e) => setBusqueda(e.target.value)}
+            />
+          </div>
+
+          {archivosOrdenados.length === 0 ? (
+            <p className={estilos.vacio}>Ningún archivo coincide con tu búsqueda.</p>
+          ) : (
+            <table className={estilos.tabla}>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nombre</th>
+                  <th 
+                    className={estilos.columnaOrdenable}
+                    onClick={() => setOrdenAscendente(!ordenAscendente)}
+                  >
+                    Tamaño {ordenAscendente ? '↑' : '↓'}
+                  </th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {archivosOrdenados.map((archivo) => (
+                  <tr key={archivo.id}>
+                    <td className={estilos.idCelda} title={archivo.id}>
+                      {archivo.id.slice(0, 8)}...
+                    </td>
+                    <td>{archivo.nombreOriginal}</td>
+                    <td>{formatearTamano(archivo.tamanoBytes)}</td>
+                    <td className={estilos.accionesCelda}>
+                      <a className={estilos.descargar} href={urlDescarga(archivo.id)}>
+                        Descargar
+                      </a>
+                      <button
+                        type="button"
+                        className={estilos.eliminar}
+                        onClick={() => manejarEliminar(archivo)}
+                      >
+                        Eliminar
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </>
+      )}
     </main>
   )
 }

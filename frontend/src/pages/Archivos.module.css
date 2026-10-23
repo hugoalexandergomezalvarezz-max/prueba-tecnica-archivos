@@ -1,5 +1,5 @@
 .contenedor {
-  max-width: 720px;
+  max-width: 900px;
   margin: 0 auto;
   padding: 2rem 1rem;
 }
@@ -76,40 +76,75 @@
   padding: 2rem 0;
 }
 
-.lista {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
+/* --- ESTILOS NUEVOS PARA LA TABLA Y BUSCADOR --- */
+
+.barraBusqueda {
+  margin-bottom: 1rem;
 }
 
-.archivo {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 1rem;
-  padding: 0.85rem 1rem;
-  background: var(--superficie);
+.barraBusqueda input {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
   border: 1px solid var(--borde);
+  border-radius: 8px;
+  background: var(--superficie);
+  color: var(--texto);
+  font-size: 0.95rem;
+}
+
+.barraBusqueda input:focus {
+  outline: none;
+  border-color: var(--primario);
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--superficie);
   border-radius: var(--radio);
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
-.nombre {
+.tabla th,
+.tabla td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--borde);
+  font-size: 0.9rem;
+}
+
+.tabla th {
+  background: var(--fondo);
   font-weight: 600;
-  word-break: break-word;
+  color: var(--texto);
 }
 
-.detalle {
-  font-size: 0.85rem;
+.tabla tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.columnaOrdenable {
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+}
+
+.columnaOrdenable:hover {
+  background: var(--borde);
+}
+
+.idCelda {
+  font-family: monospace;
   color: var(--texto-suave);
+  font-size: 0.85rem;
+  cursor: help;
 }
 
-.acciones {
+.accionesCelda {
   display: flex;
   gap: 0.5rem;
+  align-items: center;
 }
 
 .descargar {
@@ -119,6 +154,7 @@
   color: var(--texto);
   font-weight: 600;
   text-decoration: none;
+  font-size: 0.85rem;
 }
 
 .descargar:hover {
@@ -133,6 +169,7 @@
   color: var(--peligro);
   font-weight: 600;
   cursor: pointer;
+  font-size: 0.85rem;
 }
 
 .eliminar:hover {
