@@ -127,7 +127,20 @@ function Archivos() {
   return (
     <main className={estilos.contenedor}>
       <header className={estilos.encabezado}>
-        <h1 className={estilos.titulo}>Mis archivos</h1>
+        <div className={estilos.identidad}>
+          <div className={estilos.avatar} title="Foto de perfil: próximamente">
+            <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor" aria-hidden="true">
+              <circle cx="12" cy="8" r="4" />
+              <path d="M4 20c0-4 4-6 8-6s8 2 8 6z" />
+            </svg>
+          </div>
+          <div>
+            <h1 className={estilos.titulo}>Mis archivos</h1>
+            <button className={estilos.proximamente} type="button" disabled title="Función pendiente para una próxima versión">
+              Editar perfil (próximamente)
+            </button>
+          </div>
+        </div>
         <div>
           <button type="button" className={estilos.botonSecundario} onClick={() => setMostrarCambioPass(!mostrarCambioPass)}>
             Cambiar contraseña

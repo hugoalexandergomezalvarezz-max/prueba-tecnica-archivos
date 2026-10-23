@@ -56,6 +56,15 @@ function Login() {
           </button>
         </form>
 
+        <button
+          className={estilos.proximamente}
+          type="button"
+          disabled
+          title="Esta función quedó pendiente para una próxima versión"
+        >
+          ¿Olvidaste tu contraseña? (próximamente)
+        </button>
+
         <p className={estilos.pie}>
           ¿No tienes cuenta? <Link to="/registro">Regístrate</Link>
         </p>

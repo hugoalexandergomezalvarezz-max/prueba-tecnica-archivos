@@ -67,6 +67,15 @@ function Registro() {
           </button>
         </form>
 
+        <button
+          className={estilos.proximamente}
+          type="button"
+          disabled
+          title="Función pendiente: recibirías un enlace de acceso en tu correo"
+        >
+          Registrarme con mi correo personal (próximamente)
+        </button>
+
         <p className={estilos.pie}>
           ¿Ya tienes cuenta? <Link to="/login">Inicia sesión</Link>
         </p>

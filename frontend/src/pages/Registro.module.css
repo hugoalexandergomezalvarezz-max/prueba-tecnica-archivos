@@ -93,3 +93,18 @@
 .pie a {
   font-weight: 600;
 }
+
+.proximamente {
+  background-color: #f0fdf4;
+  border: 1px dashed #22c55e;
+  color: #15803d;
+  font-size: 0.85rem;
+  padding: 0.5rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+  cursor: not-allowed;
+  display: block;
+  width: 100%;
+  text-align: center;
+  opacity: 0.8;
+}

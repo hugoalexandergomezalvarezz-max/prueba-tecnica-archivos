@@ -178,3 +178,34 @@
 .eliminar:hover {
   background: var(--peligro-fondo);
 }
+
+.identidad {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+}
+
+.proximamente {
+  background-color: #22c55e;
+  border: 1px dashed #166534;
+  color: #ffffff;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+  margin-top: 0.2rem;
+  cursor: not-allowed;
+  display: inline-block;
+  opacity: 0.8;
+}
