@@ -1,3 +1,6 @@
+# Git
+Durante el desarrollo de mi proyecto trabajé con dos ramas en Git utilizando la rama desarrollo para ir avanzando poco a poco y guardar los cambios que fui realizando en más de 30 commits donde se puede observar el progreso del sistema las pruebas y las correcciones que hice a lo largo del proceso cuando terminé uní la rama desarrollo con main para dejar lista la versión final del proyecto y así poder mostrar el trabajo que realicé y cómo fue evolucionando desde el inicio hasta el final
+
 # Gestión de archivos por usuario
 
 Es una aplicación web donde cada usuario administra únicamente sus propios archivos
