@@ -41,7 +41,7 @@ async function listarArchivos(usuarioId) {
     }));
 }
 
-async function obtenerArchivoParaDescarga(id, usuarioId, nombreUsuario) {
+async function obtenerArchivoParaDescarga(id, usuarioId) {
     if (!UUID_REGEX.test(id)) {
         throw new ErrorDeNegocio('Archivo no encontrado.', 404);
     }
@@ -52,13 +52,13 @@ async function obtenerArchivoParaDescarga(id, usuarioId, nombreUsuario) {
     }
 
     return {
-        rutaEnDisco: path.join(CARPETA_ARCHIVOS, nombreUsuario, archivo.NombreGuardado),
+        rutaEnDisco: path.join(CARPETA_ARCHIVOS, String(usuarioId), archivo.NombreGuardado),
         nombreOriginal: archivo.NombreOriginal,
         tipo: archivo.Tipo
     };
 }
 
-async function eliminarArchivo(id, usuarioId, nombreUsuario) {
+async function eliminarArchivo(id, usuarioId) {
     if (!UUID_REGEX.test(id)) {
         throw new ErrorDeNegocio('Archivo no encontrado.', 404);
     }
@@ -68,7 +68,7 @@ async function eliminarArchivo(id, usuarioId, nombreUsuario) {
         throw new ErrorDeNegocio('Archivo no encontrado.', 404);
     }
 
-    const rutaEnDisco = path.join(CARPETA_ARCHIVOS, nombreUsuario, eliminado.NombreGuardado);
+    const rutaEnDisco = path.join(CARPETA_ARCHIVOS, String(usuarioId), eliminado.NombreGuardado);
     await fs.unlink(rutaEnDisco).catch((error) => {
         console.error('No se pudo borrar el archivo del disco:', error);
     });

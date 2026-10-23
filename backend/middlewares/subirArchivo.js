@@ -12,7 +12,7 @@ fs.mkdirSync(CARPETA_ARCHIVOS, { recursive: true });
 
 const almacenamiento = multer.diskStorage({
     destination: (req, archivo, cb) => {
-        const carpetaUsuario = path.join(CARPETA_ARCHIVOS, req.session.nombreUsuario);
+        const carpetaUsuario = path.join(CARPETA_ARCHIVOS, String(req.session.usuarioId));
         fs.mkdirSync(carpetaUsuario, { recursive: true });
         cb(null, carpetaUsuario);
     },
