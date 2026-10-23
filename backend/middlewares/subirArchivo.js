@@ -4,14 +4,18 @@ const crypto = require('crypto');
 const fs = require('fs');
 const ErrorDeNegocio = require('../errors/ErrorDeNegocio');
 
-const CARPETA_ARCHIVOS = path.join(__dirname, '..', 'uploads');
+const CARPETA_ARCHIVOS = 'C:\\ProyectoArchivos';
 const TAMANO_MAXIMO = 10 * 1024 * 1024;
 const EXTENSIONES_PERMITIDAS = ['.pdf', '.jpg', '.jpeg', '.png', '.txt', '.docx', '.xlsx'];
 
 fs.mkdirSync(CARPETA_ARCHIVOS, { recursive: true });
 
 const almacenamiento = multer.diskStorage({
-    destination: (req, archivo, cb) => cb(null, CARPETA_ARCHIVOS),
+    destination: (req, archivo, cb) => {
+        const carpetaUsuario = path.join(CARPETA_ARCHIVOS, req.session.nombreUsuario);
+        fs.mkdirSync(carpetaUsuario, { recursive: true });
+        cb(null, carpetaUsuario);
+    },
     filename: (req, archivo, cb) => {
         const extension = path.extname(archivo.originalname).toLowerCase();
         cb(null, crypto.randomUUID() + extension);
@@ -20,11 +24,9 @@ const almacenamiento = multer.diskStorage({
 
 function filtrarTipo(req, archivo, cb) {
     const extension = path.extname(archivo.originalname).toLowerCase();
-
     if (!EXTENSIONES_PERMITIDAS.includes(extension)) {
         return cb(new ErrorDeNegocio('Tipo de archivo no permitido. Solo se aceptan PDF, JPG, PNG, TXT, DOCX y XLSX.'));
     }
-
     cb(null, true);
 }
 
@@ -46,15 +48,12 @@ function subirArchivo(req, res, next) {
             if (error instanceof ErrorDeNegocio) {
                 return res.status(error.estado).json({ error: error.message });
             }
-
             console.error(error);
             return res.status(500).json({ error: 'Ocurrió un error en el servidor. Intenta de nuevo más tarde.' });
         }
-
         if (!req.file) {
             return res.status(400).json({ error: 'Debes seleccionar un archivo.' });
         }
-
         next();
     });
 }

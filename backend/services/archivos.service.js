@@ -4,7 +4,7 @@ const archivosRepository = require('../repositories/archivos.repository');
 const path = require('path');
 const ErrorDeNegocio = require('../errors/ErrorDeNegocio');
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
+const CARPETA_ARCHIVOS = 'C:\\ProyectoArchivos';
 
 async function guardarArchivo(usuarioId, archivoSubido) {
     const archivo = {
@@ -33,7 +33,6 @@ async function guardarArchivo(usuarioId, archivoSubido) {
 
 async function listarArchivos(usuarioId) {
     const filas = await archivosRepository.listarPorUsuario(usuarioId);
-
     return filas.map((fila) => ({
         id: fila.Id,
         nombreOriginal: fila.NombreOriginal,
@@ -42,36 +41,34 @@ async function listarArchivos(usuarioId) {
     }));
 }
 
-async function obtenerArchivoParaDescarga(id, usuarioId) {
-
+async function obtenerArchivoParaDescarga(id, usuarioId, nombreUsuario) {
     if (!UUID_REGEX.test(id)) {
-    throw new ErrorDeNegocio('Archivo no encontrado.', 404);
+        throw new ErrorDeNegocio('Archivo no encontrado.', 404);
     }
-    const archivo = await archivosRepository.obtenerPorIdYUsuario(id, usuarioId);
 
+    const archivo = await archivosRepository.obtenerPorIdYUsuario(id, usuarioId);
     if (!archivo) {
         throw new ErrorDeNegocio('Archivo no encontrado.', 404);
     }
 
     return {
-        rutaEnDisco: path.join(__dirname, '..', 'uploads', archivo.NombreGuardado),
+        rutaEnDisco: path.join(CARPETA_ARCHIVOS, nombreUsuario, archivo.NombreGuardado),
         nombreOriginal: archivo.NombreOriginal,
         tipo: archivo.Tipo
     };
 }
 
-async function eliminarArchivo(id, usuarioId) {
+async function eliminarArchivo(id, usuarioId, nombreUsuario) {
     if (!UUID_REGEX.test(id)) {
         throw new ErrorDeNegocio('Archivo no encontrado.', 404);
     }
 
     const eliminado = await archivosRepository.eliminarPorIdYUsuario(id, usuarioId);
-
     if (!eliminado) {
         throw new ErrorDeNegocio('Archivo no encontrado.', 404);
     }
 
-    const rutaEnDisco = path.join(__dirname, '..', 'uploads', eliminado.NombreGuardado);
+    const rutaEnDisco = path.join(CARPETA_ARCHIVOS, nombreUsuario, eliminado.NombreGuardado);
     await fs.unlink(rutaEnDisco).catch((error) => {
         console.error('No se pudo borrar el archivo del disco:', error);
     });

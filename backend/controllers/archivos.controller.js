@@ -4,11 +4,7 @@ const responderError = require('../errors/responderError');
 async function cargarArchivo(req, res) {
     try {
         const archivo = await archivosService.guardarArchivo(req.session.usuarioId, req.file);
-
-        res.status(201).json({
-            mensaje: 'Archivo cargado exitosamente.',
-            archivo
-        });
+        res.status(201).json({ mensaje: 'Archivo cargado exitosamente.', archivo });
     } catch (error) {
         responderError(res, error);
     }
@@ -27,7 +23,8 @@ async function descargarArchivo(req, res) {
     try {
         const archivo = await archivosService.obtenerArchivoParaDescarga(
             req.params.id,
-            req.session.usuarioId
+            req.session.usuarioId,
+            req.session.nombreUsuario
         );
 
         res.download(archivo.rutaEnDisco, archivo.nombreOriginal, (error) => {
@@ -44,9 +41,9 @@ async function eliminarArchivo(req, res) {
     try {
         await archivosService.eliminarArchivo(
             req.params.id,
-            req.session.usuarioId
+            req.session.usuarioId,
+            req.session.nombreUsuario
         );
-
         res.status(200).json({ mensaje: 'Archivo eliminado exitosamente.' });
     } catch (error) {
         responderError(res, error);

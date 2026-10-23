@@ -17,8 +17,10 @@ async function iniciarSesion(req, res) {
         const { correo, contrasena } = req.body ?? {};
         if (!correo || !contrasena) return res.status(400).json({ error: 'Faltan datos obligatorios.' });
         const usuario = await usuariosService.iniciarSesion(correo, contrasena);
+        
         req.session.usuarioId = usuario.id;
         req.session.nombreUsuario = usuario.nombreUsuario;
+        
         res.status(200).json({ mensaje: 'Inicio de sesión exitoso.', usuario: usuario.nombreUsuario });
     } catch (error) {
         responderError(res, error);
