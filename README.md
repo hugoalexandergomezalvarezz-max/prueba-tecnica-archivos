@@ -1,8 +1,32 @@
 # Gestión de archivos por usuario
 
-Aplicación web donde cada usuario se registra, inicia sesión, sube archivos, ve únicamente los suyos, los descarga, los elimina y cierra sesión. Lo más importante del proyecto es que ningún usuario pueda ver ni tocar los archivos de otro, aunque conozca su identificador o cambie la URL o la petición.
+Es una aplicación web donde cada usuario administra únicamente sus propios archivos
 
-**Tecnologías:** Node.js con Express y express-session, SQL Server, React con Vite.
+Lo que más cuidé en el proyecto fue la seguridad: ningún usuario puede ver ni descargar ni borrar los archivos de otro aunque conozca su id o cambie la URL de la petición
+
+## Tecnologías
+
+- Frontend: React con Vite
+- Backend: Node.js con Express
+- Base de datos: SQL Server
+
+## Funciones
+
+Las que pide la prueba:
+- Registro de usuarios
+- Inicio y cierre de sesión
+- Subir archivos de máximo 10 MB
+- Ver solo mis archivos
+- Descargar mis archivos
+- Eliminar mis archivos
+
+Extras que agregué:
+- Tabla con ID nombre tamaño y acciones
+- Buscador por nombre ID o tamaño
+- Orden por tamaño al hacer clic en el título de la columna
+- Validación en el navegador del tamaño y del tipo antes de subir el archivo (el servidor la vuelve a validar)
+- Sesión que expira a los 30 minutos
+- Cambio de contraseña con la sesión iniciada
 
 ## Estructura del proyecto
 
@@ -16,7 +40,6 @@ backend/
   repositories/       consultas a la base de datos
   middlewares/        validación de sesión y subida de archivos
   errors/             manejo de errores
-  uploads/            archivos subidos (se crea al arrancar)
 frontend/
   src/api/            llamadas al backend
   src/pages/          pantallas (Login, Registro, Archivos)
@@ -29,13 +52,26 @@ database/
 ### Requisitos
 
 - Node.js 20 o superior y pnpm
-- SQL Server (por ejemplo SQL Server Express) con autenticación mixta activada
-- SQL Server Management Studio (SSMS) o cualquier cliente para ejecutar scripts SQL
+- SQL Server (yo usé SQL Server Express) con autenticación mixta activada
+- SQL Server Management Studio (SSMS) para correr el script
+- Windows porque los archivos se guardan en C:\ProyectoArchivos
 
-### 1. Base de datos
+### 1. Descargar el código
 
-1. Abre `database/script.sql` en SSMS y ejecútalo completo. Crea la base `ArchivosDB`, las tablas `Usuarios` y `Archivos` y los dos usuarios de prueba. Se puede ejecutar más de una vez sin duplicar nada.
-2. Crea el usuario de SQL Server que usa la aplicación, cambiando la contraseña por la tuya:
+```bash
+git clone https://github.com/hugoalexandergomezalvarezz-max/prueba-tecnica-archivos.git
+cd prueba-tecnica-archivos
+```
+
+### 2. Crear la base de datos
+
+Abrir database/script.sql en SSMS y ejecutarlo completo
+- Crea la base ArchivosDB
+- Crea las tablas Usuarios y Archivos
+- Crea los dos usuarios de prueba
+- Se puede correr más de una vez sin duplicar nada
+
+Después crear el usuario de SQL Server que usa la aplicación y cambiar la contraseña por la suya
 
 ```sql
 CREATE LOGIN app_user WITH PASSWORD = 'tu_contrasena_aqui';
@@ -48,35 +84,35 @@ ALTER ROLE db_datawriter ADD MEMBER app_user;
 GO
 ```
 
-### 2. Backend
+### 3. Backend
 
 ```bash
 cd backend
 pnpm install
 ```
 
-Copia el archivo `.env.example` como `.env` y completa los valores:
+Copiar el archivo .env.example como .env y llenar los valores
 
 ```
 PORT=3000
-DB_SERVER=localhost\\SQLEXPRESS
+DB_SERVER=localhost\SQLEXPRESS
 DB_USER=app_user
 DB_PASSWORD=la_contrasena_del_paso_anterior
 DB_DATABASE=ArchivosDB
 SESSION_SECRET=una_frase_secreta_cualquiera
 ```
 
-Ajusta `DB_SERVER` al nombre de tu instancia de SQL Server. Después arranca el servidor:
+Cambiar DB_SERVER por el nombre de su instancia de SQL Server y arrancar el servidor
 
 ```bash
 node index.js
 ```
 
-Debe aparecer `Servidor corriendo en el puerto 3000`. La carpeta `backend/uploads` se crea sola al arrancar.
+Debe aparecer el mensaje: Servidor corriendo en el puerto 3000
 
-### 3. Frontend
+### 4. Frontend
 
-En otra terminal:
+En otra terminal
 
 ```bash
 cd frontend
@@ -84,52 +120,84 @@ pnpm install
 pnpm dev
 ```
 
-Abre `http://localhost:5173` en el navegador. El backend y el frontend deben estar corriendo al mismo tiempo. Si cambias el puerto del backend en el `.env`, cambia también el destino del proxy en `frontend/vite.config.js`.
+Abrir localhost:5173 en el navegador
+
+El backend y el frontend tienen que estar corriendo al mismo tiempo
+
+Si se cambia el puerto del backend hay que cambiar también el destino del proxy en frontend/vite.config.js
 
 ## Credenciales de prueba
+
+Son usuarios que crea el script con datos inventados
 
 | Usuario  | Correo        | Contraseña |
 | -------- | ------------- | ---------- |
 | HugoTest | hugo@test.com | 12345678   |
 | AnaTest  | ana@test.com  | 12345678   |
 
-El inicio de sesión se hace con el correo y la contraseña.
+Se inicia sesión con el correo y la contraseña
 
 ## Decisiones y supuestos
 
 ### Arquitectura
 
-- Usé una arquitectura por capas en el backend: rutas, controllers, services y repositories. Así la presentación, la lógica y el acceso a datos no se mezclan y cada capa tiene una sola responsabilidad.
-- En el frontend separé las pantallas (`pages`) de las llamadas al servidor (`api`), y cada pantalla tiene sus propios estilos con CSS Modules. Los colores se definen una sola vez como variables en `index.css`.
-- Los errores esperados (400, 401, 404 y 409) los lanzo yo con mensajes claros. Cualquier error inesperado responde 500 con un mensaje genérico y el detalle solo queda en el servidor.
+- Usé una arquitectura por capas en el backend: rutas controllers services y repositories
+- Así la presentación la lógica y el acceso a datos no se mezclan y cada capa tiene una sola función
+- En el frontend separé las pantallas de las llamadas al servidor y cada pantalla tiene sus propios estilos con CSS Modules
+- Los errores esperados (400 401 404 y 409) los lanzo yo con mensajes claros
+- Si ocurre un error inesperado respondo 500 con un mensaje genérico y el detalle se queda solo en el servidor para no mostrar información interna
 
 ### Base de datos
 
-- Elegí SQL Server y creé un usuario propio para la aplicación, con permisos solo de lectura y escritura sobre `ArchivosDB`, en lugar de usar el usuario SA.
-- Los archivos usan UNIQUEIDENTIFIER como id para que no sean consecutivos ni fáciles de adivinar. Aun así, el servidor siempre verifica que el archivo pertenezca al usuario con sesión iniciada.
-- Los duplicados de usuario o correo los detecta la base de datos con restricciones UNIQUE, y el servidor traduce ese error a un 409 con un mensaje claro.
+- Elegí SQL Server y creé un usuario propio para la aplicación con permisos solo de lectura y escritura sobre ArchivosDB en lugar de usar el usuario SA
+- Usé UNIQUEIDENTIFIER como id de los archivos para que no sean consecutivos ni fáciles de adivinar
+- Aun así el servidor siempre revisa que el archivo sea del usuario que tiene la sesión iniciada
+- Los usuarios o correos repetidos los detecta la base con restricciones UNIQUE y el servidor lo convierte en un error 409 con un mensaje claro
+- Todas las consultas usan parámetros para que los datos nunca se peguen dentro del texto SQL y así evito la inyección SQL
 
 ### Usuarios y sesión
 
-- Las contraseñas se guardan como hash con bcrypt, nunca en texto plano, y deben tener al menos 8 caracteres.
-- Guardo los correos en minúsculas y sin espacios para evitar duplicados.
-- El mensaje del login es el mismo si falla el correo o la contraseña, para no revelar qué correos existen.
-- La sesión vive en la memoria del servidor (express-session) y se identifica con una cookie. Si el servidor se reinicia, las sesiones se pierden y hay que iniciar sesión otra vez. Para esta prueba es suficiente y simple de explicar.
-- Al cerrar sesión, el servidor destruye la sesión y borra la cookie, así la cookie vieja deja de servir.
-- El frontend usa un proxy de Vite hacia el backend, así el navegador ve un solo origen y la cookie de sesión funciona sin configurar CORS.
+- Las contraseñas se guardan con hash de bcrypt y nunca en texto plano y deben tener mínimo 8 caracteres
+- Guardo los correos en minúsculas y sin espacios para evitar duplicados
+- El mensaje del login es el mismo si falla el correo o la contraseña para no revelar qué correos existen
+- Usé sesiones en el servidor con express-session y una cookie httpOnly en lugar de un token JWT porque así puedo invalidar la sesión al cerrarla y es más simple de explicar
+- La sesión expira a los 30 minutos
+- La sesión vive en la memoria del servidor por eso si el servidor se reinicia hay que volver a iniciar sesión y para esta prueba me pareció suficiente
+- Al cerrar sesión el servidor destruye la sesión y borra la cookie
+- El frontend usa un proxy de Vite hacia el backend para que el navegador vea un solo origen y la cookie funcione sin configurar CORS
+- Para cambiar la contraseña el usuario escribe la actual y la nueva y el servidor guarda el hash nuevo
 
 ### Archivos
 
-- Los archivos se guardan en el disco, en `backend/uploads`, fuera de cualquier carpeta pública. Solo se llega a ellos por la ruta de descarga, que primero valida la sesión y el dueño.
-- En el disco cada archivo se guarda con un nombre generado por el servidor (UUID más extensión). El nombre original queda solo en la base de datos. Así dos usuarios pueden subir archivos con el mismo nombre sin pisarse y nadie puede adivinar la ruta.
-- Tipos permitidos: PDF, JPG, PNG, TXT, DOCX y XLSX. Son los formatos de documentos e imágenes más comunes, y no incluí ejecutables ni comprimidos, que son los de más riesgo.
-- El tamaño máximo es de 10 MB por archivo, validado en el servidor con multer antes de guardar nada. Si el archivo no cumple, el servidor responde con un mensaje claro y no deja nada en el disco.
+- Los archivos se guardan en el disco en C:\ProyectoArchivos fuera de la carpeta del proyecto y de cualquier carpeta pública
+- Cada usuario tiene su propia subcarpeta que se crea cuando sube su primer archivo
+- A los archivos solo se llega por la ruta de descarga que antes valida la sesión y el dueño
+- Cada archivo se guarda con un nombre generado por el servidor (UUID más la extensión) y el nombre original queda solo en la base de datos
+- Así dos usuarios pueden subir archivos con el mismo nombre sin pisarse y nadie puede adivinar la ruta
+- Tipos permitidos: PDF JPG PNG TXT DOCX y XLSX por ser los formatos más comunes de documentos e imágenes
+- No permití ejecutables ni comprimidos ni HTML porque son los de más riesgo
+- El tamaño máximo es de 10 MB y se valida en el servidor con multer antes de guardar nada
+- Si el archivo no cumple el servidor responde con un mensaje claro y no guarda nada en el disco
+- Si falla el guardado de los datos en la base borro el archivo del disco para que no queden archivos sin dueño
 
 ### Seguridad de acceso
 
-- La sesión se valida en el servidor en cada petición de archivos, antes de listar, descargar, subir o eliminar.
-- El dueño de cada archivo se toma siempre de la sesión del servidor, nunca de lo que manda el cliente. Listar, descargar y eliminar filtran por id y por usuario al mismo tiempo.
-- Si un usuario pide un archivo ajeno o inexistente, respondo 404 con el mismo mensaje. Con un 403 le confirmaría que el archivo existe.
-- Valido el formato del id antes de consultar la base de datos, para que un id inválido dé 404 y no un error 500.
-- Al eliminar, borro primero la fila de la base de datos y después el archivo del disco. Si falla el borrado del disco, el usuario ya no ve el archivo y el error queda registrado en el servidor.
-- La validación del formulario en el navegador es solo una ayuda para el usuario. Las validaciones que cuentan son las del servidor.
+- La sesión se valida en el servidor en cada petición de archivos antes de listar subir descargar o eliminar
+- El dueño del archivo sale siempre de la sesión del servidor y nunca de lo que manda el cliente
+- Listar descargar y eliminar filtran por id y por usuario al mismo tiempo
+- Si alguien pide un archivo ajeno o que no existe respondo 404 con el mismo mensaje porque con un 403 le confirmaría que el archivo existe
+- Valido el formato del id antes de consultar la base para que un id inválido dé 404 y no un error 500
+- Al eliminar borro primero la fila de la base y después el archivo del disco
+
+## Limitaciones y mejoras pendientes
+
+- Solo valido la extensión del archivo y no su contenido real (en producción también revisaría el contenido)
+- La cookie de sesión no es secure porque trabajo en localhost (en producción usaría HTTPS)
+- No limité los intentos de inicio de sesión
+- Por falta de tiempo quedaron pendientes:
+  - Recuperar la contraseña con un enlace al correo
+  - Correo de bienvenida al registrarse
+  - Edición de perfil con foto
+  - Paginación de la lista
+  - Usar un ORM en lugar de consultas escritas a mano (aunque mis consultas ya usan parámetros)
+- En las pantallas dejé deshabilitados los marcadores de esas funciones para mostrar la idea
